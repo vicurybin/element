@@ -11,6 +11,7 @@ var externals = {};
 
 Object.keys(Components).forEach(function(key) {
   externals[`element-ui/packages/${key}`] = `element-ui/lib/${key}`;
+  console.log(externals[`element-ui/packages/${key}`])
 });
 
 externals['element-ui/src/locale'] = 'element-ui/lib/locale';

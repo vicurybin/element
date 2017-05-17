@@ -235,6 +235,10 @@
             {
               "path": "/collapse",
               "title": "Collapse 折叠面板"
+            },
+            {
+              "path": "/domob-alert",
+              "title": "DomobAlert"
             }
           ]
         }
@@ -477,6 +481,10 @@
             {
               "path": "/collapse",
               "title": "Collapse"
+            },
+            {
+              "path": "/domob-alert",
+              "title": "DomobAlert"
             }
           ]
         }
