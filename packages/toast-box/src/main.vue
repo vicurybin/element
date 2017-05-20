@@ -5,7 +5,7 @@
   			{{title}}
   		</div>
   		<div class="el-toast-box__content">
-  			{{content}}
+  			{{content}}拉啦
   		</div>
   	</div>
   </div>
