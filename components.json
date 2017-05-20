@@ -63,5 +63,6 @@
   "cascader": "./packages/cascader/index.js",
   "color-picker": "./packages/color-picker/index.js",
   "transfer": "./packages/transfer/index.js",
-  "domob-alert": "./packages/domob-alert/index.js"
+  "domob-alert": "./packages/domob-alert/index.js",
+  "toast-box": "./packages/toast-box/index.js"
 }

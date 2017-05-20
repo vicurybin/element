@@ -65,6 +65,7 @@ import Cascader from '../packages/cascader/index.js';
 import ColorPicker from '../packages/color-picker/index.js';
 import Transfer from '../packages/transfer/index.js';
 import DomobAlert from '../packages/domob-alert/index.js';
+import ToastBox from '../packages/toast-box/index.js';
 import locale from 'element-ui/src/locale';
 import CollapseTransition from 'element-ui/src/transitions/collapse-transition';
 
@@ -130,6 +131,7 @@ const components = [
   ColorPicker,
   Transfer,
   DomobAlert,
+  ToastBox,
   CollapseTransition
 ];
 
@@ -160,7 +162,7 @@ if (typeof window !== 'undefined' && window.Vue) {
 };
 
 module.exports = {
-  version: '1.3.2',
+  version: '1.3.6',
   locale: locale.use,
   i18n: locale.i18n,
   install,
@@ -229,5 +231,6 @@ module.exports = {
   Cascader,
   ColorPicker,
   Transfer,
-  DomobAlert
+  DomobAlert,
+  ToastBox
 };

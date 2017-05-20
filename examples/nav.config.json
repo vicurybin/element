@@ -239,6 +239,10 @@
             {
               "path": "/domob-alert",
               "title": "DomobAlert"
+            },
+            {
+              "path": "/toast-box",
+              "title": "ToastBox 弹层"
             }
           ]
         }
@@ -485,6 +489,10 @@
             {
               "path": "/domob-alert",
               "title": "DomobAlert"
+            },
+            {
+              "path": "/toast-box",
+              "title": "ToastBox"
             }
           ]
         }
