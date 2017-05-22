@@ -1,69 +1,24 @@
 <template>
-  <div class="el-toast-box__wrapper" v-show="visible">
-  	<div class="el-toast-box">
-  		<div class="el-toast-box__title">
+  <div class="el-toast-box__wrapper" v-show="visible" @click="handleWrapperClick">
+  	<div class="el-toast-box" :class="customClass">
+  		<div class="el-toast-box__title" v-if="title !== undefined">
   			{{title}}
   		</div>
   		<div class="el-toast-box__content">
-  			{{content}}拉啦
+  			{{content}}
   		</div>
   	</div>
   </div>
 </template>
-<!-- <template>
-  <transition name="msgbox-fade">
-    <div class="el-message-box__wrapper" v-show="visible" @click.self="handleWrapperClick">
-      <div class="el-message-box" :class="customClass">
-        <div class="el-message-box__header" v-if="title !== undefined">
-          <div class="el-message-box__title">{{ title || t('el.messagebox.title') }}</div>
-          <i class="el-message-box__close el-icon-close" @click="handleAction('cancel')" v-if="showClose"></i>
-        </div>
-        <div class="el-message-box__content" v-if="message !== ''">
-          <div class="el-message-box__status" :class="[ typeClass ]"></div>
-          <div class="el-message-box__message" :style="{ 'margin-left': typeClass ? '50px' : '0' }">
-            <slot><p>{{ message }}</p></slot>
-          </div>
-          <div class="el-message-box__input" v-show="showInput">
-            <el-input v-model="inputValue" @keyup.enter.native="handleAction('confirm')" :placeholder="inputPlaceholder" ref="input"></el-input>
-            <div class="el-message-box__errormsg" :style="{ visibility: !!editorErrorMessage ? 'visible' : 'hidden' }">{{ editorErrorMessage }}</div>
-          </div>
-        </div>
-        <div class="el-message-box__btns">
-          <el-button
-            :loading="cancelButtonLoading"
-            :class="[ cancelButtonClasses ]"
-            v-show="showCancelButton"
-            @click.native="handleAction('cancel')">
-            {{ cancelButtonText || t('el.messagebox.cancel') }}
-          </el-button>
-          <el-button
-            :loading="confirmButtonLoading"
-            ref="confirm"
-            :class="[ confirmButtonClasses ]"
-            v-show="showConfirmButton"
-            @click.native="handleAction('confirm')">
-            {{ confirmButtonText || t('el.messagebox.confirm') }}
-          </el-button>
-        </div>
-      </div>
-    </div>
-  </transition>
-</template> -->
+
 
 <script type="text/babel">
   import Popup from 'element-ui/src/utils/popup';
   import Locale from 'element-ui/src/mixins/locale';
-  // import ElInput from 'element-ui/packages/input';
-  // import ElButton from 'element-ui/packages/button';
   import { addClass, removeClass } from 'element-ui/src/utils/dom';
   import { t } from 'element-ui/src/locale';
 
-  // let typeMap = {
-  //   success: 'circle-check',
-  //   info: 'information',
-  //   warning: 'warning',
-  //   error: 'circle-cross'
-  // };
+
 
   export default {
     mixins: [Popup, Locale],
@@ -80,16 +35,12 @@
         default: true
       },
       closeOnClickModal: {
-        default: true
-      },
-      closeOnPressEscape: {
-        default: true
+        default: false
       }
     },
 
     components: {
-      // ElInput,
-      // ElButton
+
     },
 
     computed: {
@@ -136,7 +87,7 @@
         if (!this.transition) {
           this.doAfterClose();
         }
-        if (this.action) this.callback(this.action, this);
+        
       },
 
       handleWrapperClick() {
@@ -144,46 +95,6 @@
           this.action = '';
           this.doClose();
         }
-      },
-
-      handleAction(action) {
-        if (this.$type === 'prompt' && action === 'confirm' && !this.validate()) {
-          return;
-        }
-        this.action = action;
-        if (typeof this.beforeClose === 'function') {
-          this.close = this.getSafeClose();
-          this.beforeClose(action, this, this.close);
-        } else {
-          this.doClose();
-        }
-      },
-
-      validate() {
-        if (this.$type === 'prompt') {
-          var inputPattern = this.inputPattern;
-          if (inputPattern && !inputPattern.test(this.inputValue || '')) {
-            this.editorErrorMessage = this.inputErrorMessage || t('el.messagebox.error');
-            addClass(this.$refs.input.$el.querySelector('input'), 'invalid');
-            return false;
-          }
-          var inputValidator = this.inputValidator;
-          if (typeof inputValidator === 'function') {
-            var validateResult = inputValidator(this.inputValue);
-            if (validateResult === false) {
-              this.editorErrorMessage = this.inputErrorMessage || t('el.messagebox.error');
-              addClass(this.$refs.input.$el.querySelector('input'), 'invalid');
-              return false;
-            }
-            if (typeof validateResult === 'string') {
-              this.editorErrorMessage = validateResult;
-              return false;
-            }
-          }
-        }
-        this.editorErrorMessage = '';
-        removeClass(this.$refs.input.$el.querySelector('input'), 'invalid');
-        return true;
       }
     },
 
@@ -200,22 +111,18 @@
       // },
 
       visible(val) {
+        let vm = this;
         if (val) this.uid++;
-        if (this.$type === 'alert' || this.$type === 'confirm') {
-          this.$nextTick(() => {
-            this.$refs.confirm.$el.focus();
-          });
-        }
-        if (this.$type !== 'prompt') return;
         if (val) {
-          setTimeout(() => {
-            if (this.$refs.input && this.$refs.input.$el) {
-              this.$refs.input.$el.querySelector('input').focus();
-            }
-          }, 500);
+          this.duration = this.duration ++;
+          if(this.duration != 0){
+            setTimeout(() => {
+              vm.doClose()
+            }, this.duration);
+          }
+          
         } else {
-          this.editorErrorMessage = '';
-          removeClass(this.$refs.input.$el.querySelector('input'), 'invalid');
+                    
         }
       }
     },
@@ -227,7 +134,8 @@
         content: '',
         type: '',
         customClass: '',
-        callback: null
+        callback: null,
+        visible:false
       };
     }
   };
@@ -239,12 +147,21 @@
 		top:50%;
 		left:50%;
 		transform: translate3d(-50px,-50px,0);
-		width:100px;
+		max-width:300px;
 		height: 100px;
 		background:rgba(0,0,0,0.8);
 		color:#fff;
-		display: flex;
-		align-items: center;
-		justify-content: center;
+		text-align: center;
+    font-size: 0.8em;
+    padding: 1em 3em;
+    border-radius: 8px;
+    user-select: none;
 	}
+  .el-toast-box__title{
+      padding:1em;
+    }
+  .el-toast-box__content{
+    text-align: left;
+  }
+
 </style>

@@ -3,7 +3,7 @@
 const defaults = {
   title: undefined,
   content: '',
-  type: '',
+  duration:2000
 };
 
 import Vue from 'vue';
@@ -16,48 +16,48 @@ const ToastBoxConstructor = Vue.extend(toastboxVue);
 let currentToast, instance;
 let toastQueue = [];
 
-const defaultCallback = action => {
-  if (currentToast) {
-    let callback = currentToast.callback;
-    if (typeof callback === 'function') {
-      if (instance.showInput) {
-        callback(instance.inputValue, action);
-      } else {
-        callback(action);
-      }
-    }
-    if (currentToast.resolve) {
-      let $type = currentToast.options.$type;
-      if ($type === 'confirm' || $type === 'prompt') {
-        if (action === 'confirm') {
-          if (instance.showInput) {
-            currentToast.resolve({ value: instance.inputValue, action });
-          } else {
-            currentToast.resolve(action);
-          }
-        } else if (action === 'cancel' && currentToast.reject) {
-          currentToast.reject(action);
-        }
-      } else {
-        currentToast.resolve(action);
-      }
-    }
-  }
-};
+// const defaultCallback = action => {
+//   if (currentToast) {
+//     let callback = currentToast.callback;
+//     if (typeof callback === 'function') {
+//       if (instance.showInput) {
+//         callback(instance.inputValue, action);
+//       } else {
+//         callback(action);
+//       }
+//     }
+//     if (currentToast.resolve) {
+//       let $type = currentToast.options.$type;
+//       if ($type === 'confirm' || $type === 'prompt') {
+//         if (action === 'confirm') {
+//           if (instance.showInput) {
+//             currentToast.resolve({ value: instance.inputValue, action });
+//           } else {
+//             currentToast.resolve(action);
+//           }
+//         } else if (action === 'cancel' && currentToast.reject) {
+//           currentToast.reject(action);
+//         }
+//       } else {
+//         currentToast.resolve(action);
+//       }
+//     }
+//   }
+// };
 
 const initInstance = () => {
   instance = new ToastBoxConstructor({
     el: document.createElement('div')
   });
 
-  instance.callback = defaultCallback;
+  // instance.callback = defaultCallback;
 };
 
 const showNextToast = () => {
   if (!instance) {
     initInstance();
   }
-  instance.action = '';
+  // instance.action = '';
 
   if (!instance.visible || instance.closeTimer) {
     if (toastQueue.length > 0) {
@@ -69,20 +69,20 @@ const showNextToast = () => {
           instance[prop] = options[prop];
         }
       }
-      if (options.callback === undefined) {
-        instance.callback = defaultCallback;
-      }
+      // if (options.callback === undefined) {
+      //   instance.callback = defaultCallback;
+      // }
 
-      let oldCb = instance.callback;
-      instance.callback = (action, instance) => {
-        oldCb(action, instance);
-        showNextMsg();
-      };
-      if (isVNode(instance.message)) {
-        instance.$slots.default = [instance.message];
-        instance.message = null;
+      // let oldCb = instance.callback;
+      // instance.callback = (action, instance) => {
+      //   oldCb(action, instance);
+      //   showNextToast();
+      // };
+      if (isVNode(instance.content)) {
+        instance.$slots.default = [instance.content];
+        instance.content = null;
       }
-      ['modal', 'showClose', 'closeOnClickModal', 'closeOnPressEscape'].forEach(prop => {
+      ['modal', 'closeOnClickModal'].forEach(prop => {
         if (instance[prop] === undefined) {
           instance[prop] = true;
         }
@@ -96,7 +96,7 @@ const showNextToast = () => {
   }
 };
 
-const ToastBox = function(options, callback) {
+const ToastBox = function(options) {
   if (Vue.prototype.$isServer) return;
   if (typeof options === 'string') {
     options = {
@@ -105,18 +105,12 @@ const ToastBox = function(options, callback) {
     if (arguments[1]) {
       options.title = arguments[1];
     }
-    if (arguments[2]) {
-      options.type = arguments[2];
-    }
-  } else if (options.callback && !callback) {
-    callback = options.callback;
   }
 
   if (typeof Promise !== 'undefined') {
     return new Promise((resolve, reject) => { // eslint-disable-line
       toastQueue.push({
         options: merge({}, defaults, ToastBox.defaults, options),
-        callback: callback,
         resolve: resolve,
         reject: reject
       });
@@ -126,7 +120,6 @@ const ToastBox = function(options, callback) {
   } else {
     toastQueue.push({
       options: merge({}, defaults, ToastBox.defaults, options),
-      callback: callback
     });
 
     showNextToast();
@@ -144,7 +137,7 @@ ToastBox.toast = (content, title, options) => {
   }
   return ToastBox(merge({
     title: title,
-    content: content,
+    content: content
   }, options));
 };
 
