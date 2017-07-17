@@ -1,5 +1,5 @@
 import { getCell, getColumnByCell, getRowIdentity } from './util';
-import { hasClass } from 'element-ui/src/utils/dom';
+import { hasClass, addClass, removeClass } from 'element-ui/src/utils/dom';
 import ElCheckbox from 'element-ui/packages/checkbox';
 import ElTooltip from 'element-ui/packages/tooltip';
 import debounce from 'throttle-debounce/debounce';
@@ -14,6 +14,7 @@ export default {
     store: {
       required: true
     },
+    stripe: Boolean,
     context: {},
     layout: {
       required: true
@@ -52,7 +53,7 @@ export default {
                 on-contextmenu={ ($event) => this.handleContextMenu($event, row) }
                 on-mouseenter={ _ => this.handleMouseEnter($index) }
                 on-mouseleave={ _ => this.handleMouseLeave() }
-                class={ ['el-table__row', this.getRowClass(row, $index)] }>
+                class={ [this.getRowClass(row, $index)] }>
                 {
                   this._l(this.columns, (column, cellIndex) =>
                     <td
@@ -93,14 +94,14 @@ export default {
       if (!this.store.states.isComplex) return;
       const el = this.$el;
       if (!el) return;
-      const rows = el.querySelectorAll('tbody > tr');
+      const rows = el.querySelectorAll('tbody > tr.el-table__row');
       const oldRow = rows[oldVal];
       const newRow = rows[newVal];
       if (oldRow) {
-        oldRow.classList.remove('hover-row');
+        removeClass(oldRow, 'hover-row');
       }
       if (newRow) {
-        newRow.classList.add('hover-row');
+        addClass(newRow, 'hover-row');
       }
     },
     'store.states.currentRow'(newVal, oldVal) {
@@ -112,12 +113,12 @@ export default {
       const oldRow = rows[data.indexOf(oldVal)];
       const newRow = rows[data.indexOf(newVal)];
       if (oldRow) {
-        oldRow.classList.remove('current-row');
+        removeClass(oldRow, 'current-row');
       } else if (rows) {
-        [].forEach.call(rows, row => row.classList.remove('current-row'));
+        [].forEach.call(rows, row => removeClass(row, 'current-row'));
       }
       if (newRow) {
-        newRow.classList.add('current-row');
+        addClass(newRow, 'current-row');
       }
     }
   },
@@ -186,8 +187,11 @@ export default {
     },
 
     getRowClass(row, index) {
-      const classes = [];
+      const classes = ['el-table__row'];
 
+      if (this.stripe && index % 2 === 1) {
+        classes.push('el-table__row--striped');
+      }
       const rowClassName = this.rowClassName;
       if (typeof rowClassName === 'string') {
         classes.push(rowClassName);

@@ -85,7 +85,9 @@
       },
       contentStyle() {
         var ret = {};
+        const label = this.label;
         if (this.form.labelPosition === 'top' || this.form.inline) return ret;
+        if (!label && !this.labelWidth) return ret;
         var labelWidth = this.labelWidth || this.form.labelWidth;
         if (labelWidth) {
           ret.marginLeft = labelWidth;
@@ -112,6 +114,21 @@
 
           return getPropByPath(model, path).v;
         }
+      },
+      isRequired() {
+        let rules = this.getRules();
+        let isRequired = false;
+
+        if (rules && rules.length) {
+          rules.every(rule => {
+            if (rule.required) {
+              isRequired = true;
+              return false;
+            }
+            return true;
+          });
+        }
+        return isRequired;
       }
     },
     data() {
@@ -119,8 +136,7 @@
         validateState: '',
         validateMessage: '',
         validateDisabled: false,
-        validator: {},
-        isRequired: false
+        validator: {}
       };
     },
     methods: {
@@ -211,12 +227,6 @@
         let rules = this.getRules();
 
         if (rules.length) {
-          rules.every(rule => {
-            if (rule.required) {
-              this.isRequired = true;
-              return false;
-            }
-          });
           this.$on('el.form.blur', this.onFieldBlur);
           this.$on('el.form.change', this.onFieldChange);
         }

@@ -32,7 +32,7 @@
         @keydown.down.prevent="navigateOptions('next')"
         @keydown.up.prevent="navigateOptions('prev')"
         @keydown.enter.prevent="selectOption"
-        @keydown.esc.prevent="visible = false"
+        @keydown.esc.stop.prevent="visible = false"
         @keydown.delete="deletePrevTag"
         v-model="query"
         :debounce="remote ? 300 : 0"
@@ -57,7 +57,7 @@
       @keydown.native.down.prevent="navigateOptions('next')"
       @keydown.native.up.prevent="navigateOptions('prev')"
       @keydown.native.enter.prevent="selectOption"
-      @keydown.native.esc.prevent="visible = false"
+      @keydown.native.esc.stop.prevent="visible = false"
       @keydown.native.tab="visible = false"
       @paste.native="debouncedOnInputChange"
       @mouseenter.native="inputHovering = true"
@@ -84,7 +84,7 @@
           </el-option>
           <slot></slot>
         </el-scrollbar>
-        <p class="el-select-dropdown__empty" v-if="emptyText && !allowCreate">{{ emptyText }}</p>
+        <p class="el-select-dropdown__empty" v-if="emptyText && (allowCreate && options.length === 0 || !allowCreate)">{{ emptyText }}</p>
       </el-select-menu>
     </transition>
   </div>
@@ -266,23 +266,7 @@
           this.broadcast('ElOptionGroup', 'queryChange');
         }
         if (this.defaultFirstOption && (this.filterable || this.remote) && this.filteredOptionsCount) {
-          this.hoverIndex = -1;
-          for (let i = 0; i !== this.options.length; ++i) {
-            const option = this.options[i];
-            if (val) {
-              // pick first options that passes the filter
-              if (!option.disabled && !option.groupDisabled && option.visible) {
-                this.hoverIndex = i;
-                break;
-              }
-            } else {
-              // pick currently selected option
-              if (option.itemSelected) {
-                this.hoverIndex = i;
-                break;
-              }
-            }
-          }
+          this.checkDefaultFirstOption();
         }
       },
 
@@ -345,6 +329,9 @@
         let inputs = this.$el.querySelectorAll('input');
         if ([].indexOf.call(inputs, document.activeElement) === -1) {
           this.setSelected();
+        }
+        if (this.defaultFirstOption && (this.filterable || this.remote) && this.filteredOptionsCount) {
+          this.checkDefaultFirstOption();
         }
       }
     },
@@ -461,6 +448,7 @@
 
       doDestroy() {
         this.$refs.popper && this.$refs.popper.doDestroy();
+        this.dropdownUl = null;
       },
 
       handleClose() {
@@ -615,6 +603,7 @@
         event.stopPropagation();
         this.$emit('input', '');
         this.visible = false;
+        this.$emit('clear');
       },
 
       deleteTag(event, tag) {
@@ -651,6 +640,26 @@
       handleResize() {
         this.resetInputWidth();
         if (this.multiple) this.resetInputHeight();
+      },
+
+      checkDefaultFirstOption() {
+        this.hoverIndex = -1;
+        for (let i = 0; i !== this.options.length; ++i) {
+          const option = this.options[i];
+          if (this.query) {
+            // pick first options that passes the filter
+            if (!option.disabled && !option.groupDisabled && option.visible) {
+              this.hoverIndex = i;
+              break;
+            }
+          } else {
+            // pick currently selected option
+            if (option.itemSelected) {
+              this.hoverIndex = i;
+              break;
+            }
+          }
+        }
       }
     },
 

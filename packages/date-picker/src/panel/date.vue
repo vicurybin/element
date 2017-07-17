@@ -161,7 +161,7 @@
           this.date = newVal;
           this.year = newVal.getFullYear();
           this.month = newVal.getMonth();
-          this.$emit('pick', newVal, true);
+          this.$emit('pick', newVal, false);
         }
       },
 
@@ -310,7 +310,7 @@
 
         this.date.setFullYear(year);
         if (this.selectionMode === 'year') {
-          this.$emit('pick', new Date(year));
+          this.$emit('pick', new Date(year, 0, 1));
         } else {
           this.currentView = 'month';
         }
@@ -325,6 +325,7 @@
       },
 
       confirm() {
+        this.date.setMilliseconds(0);
         this.$emit('pick', this.date);
       },
 

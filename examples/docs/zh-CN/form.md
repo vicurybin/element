@@ -277,7 +277,7 @@
   <el-form-item label="活动形式">
     <el-input type="textarea" v-model="form.desc"></el-input>
   </el-form-item>
-  <el-form-item>
+  <el-form-item label-width="80px">
     <el-button type="primary" @click="onSubmit">立即创建</el-button>
     <el-button>取消</el-button>
   </el-form-item>
@@ -436,7 +436,7 @@
   <el-form-item label="活动形式" prop="desc">
     <el-input type="textarea" v-model="ruleForm.desc"></el-input>
   </el-form-item>
-  <el-form-item>
+  <el-form-item label-width="100px">
     <el-button type="primary" @click="submitForm('ruleForm')">立即创建</el-button>
     <el-button @click="resetForm('ruleForm')">重置</el-button>
   </el-form-item>
@@ -515,7 +515,7 @@
   <el-form-item label="年龄" prop="age">
     <el-input v-model.number="ruleForm2.age"></el-input>
   </el-form-item>
-  <el-form-item>
+  <el-form-item label-width="100px">
     <el-button type="primary" @click="submitForm('ruleForm2')">提交</el-button>
     <el-button @click="resetForm('ruleForm2')">重置</el-button>
   </el-form-item>
@@ -623,7 +623,7 @@
   >
     <el-input v-model="domain.value"></el-input><el-button @click.prevent="removeDomain(domain)">删除</el-button>
   </el-form-item>
-  <el-form-item>
+  <el-form-item label-width="100px">
     <el-button type="primary" @click="submitForm('dynamicValidateForm')">提交</el-button>
     <el-button @click="addDomain">新增域名</el-button>
     <el-button @click="resetForm('dynamicValidateForm')">重置</el-button>
@@ -688,7 +688,7 @@
   >
     <el-input type="age" v-model.number="numberValidateForm.age" auto-complete="off"></el-input>
   </el-form-item>
-  <el-form-item>
+  <el-form-item label-width="100px">
     <el-button type="primary" @click="submitForm('numberValidateForm')">提交</el-button>
     <el-button @click="resetForm('numberValidateForm')">重置</el-button>
   </el-form-item>
@@ -722,6 +722,10 @@
 ```
 :::
 
+:::tip
+当 `el-form-item` 的 `label` 属性为空时，如果希望和其他 `label` 属性不为空的表单项内容对齐，请在 `el-form-item` 上设置 `label-width` 属性。
+:::
+
 ### Form Attributes
 
 | 参数      | 说明          | 类型      | 可选值                           | 默认值  |
@@ -746,7 +750,7 @@
 
 | 参数      | 说明          | 类型      | 可选值                           | 默认值  |
 |---------- |-------------- |---------- |--------------------------------  |-------- |
-| prop    | 表单域 model 字段 | string    | 传入 Form 组件的 `model` 中的字段 | — |
+| prop    | 表单域 model 字段，在使用 validate、resetFields 方法的情况下，该属性是必填的 | string    | 传入 Form 组件的 `model` 中的字段 | — |
 | label | 标签文本 | string | — | — |
 | label-width | 表单域标签的的宽度，例如 '50px' | string |       —       | — |
 | required | 是否必填，如不设置，则会根据校验规则自动生成 | bolean | — | false |
